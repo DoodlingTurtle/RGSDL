@@ -1,0 +1,10 @@
+build
+.vs
+*.exe
+debug.main
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/settings.json
+.vscode/dryrun.log
+.vscode/targets.log
+.vscode/configurationCache.log
