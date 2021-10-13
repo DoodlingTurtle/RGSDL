@@ -1,0 +1,22 @@
+{
+    "configurations": {
+        "C - Launch": {
+            "adapter": "vscode-cpptools",
+            "configuration": {
+                "name": "Cpp: Launch current file",
+                "type": "cppdbg",
+                "request": "launch",
+                "externalConsole": true,
+                "logging": {
+                    "engineLogging": false
+                },
+                "debugOptions": [],
+                "MIMode": "gdb",
+                "cwd": "${cwd}",
+                "program": "debug.main",
+                "args": [
+                    "--fullscreen_off"
+                ]
+            }
+        }
+    } }
