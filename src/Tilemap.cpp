@@ -1,6 +1,6 @@
-#include "../headers/Tilemap.h"
-#include "../headers/Engine.h"
-#include "../headers/Macros.h"
+#include "../Tilemap.h"
+#include "../Engine.h"
+#include "../Macros.h"
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>

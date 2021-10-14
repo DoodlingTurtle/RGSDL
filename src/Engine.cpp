@@ -1,5 +1,5 @@
-#include "../headers/Engine.h"
-#include "../headers/Macros.h"
+#include "../Engine.h"
+#include "../Macros.h"
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_pixels.h>
 #include <algorithm>
@@ -37,7 +37,8 @@ namespace RGSDL {
             float targetDPI,
             const char *title, 
             Scene* initialScene,
-            uint32_t sdl_flags
+            uint32_t sdl_flags,
+            uint32_t window_flags
             ) { /*{{{*/
 
         if(initialScene == nullptr) { /*{{{*/
@@ -62,7 +63,7 @@ namespace RGSDL {
                 , SDL_WINDOWPOS_CENTERED_DISPLAY(0)
                 , SDL_WINDOWPOS_CENTERED_DISPLAY(0)
                 , windowWidth * ws, windowHeight * ws
-                , SDL_WINDOW_RESIZABLE|SDL_WINDOW_SHOWN);
+                , window_flags|SDL_WINDOW_RESIZABLE|SDL_WINDOW_SHOWN);
 
         if(window == nullptr) { /*{{{*/
             Error("SDL-WindowError: " << SDL_GetError());
@@ -228,7 +229,7 @@ namespace RGSDL {
     void Engine::toggleFullscreen() {
         SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
     }
-
+    
     //}}}
 
     //=============================================================================

@@ -1,5 +1,5 @@
-#include "../headers/Scene.h"
-#include "../headers/Engine.h"
+#include "../Scene.h"
+#include "../Engine.h"
 
 namespace RGSDL {
   

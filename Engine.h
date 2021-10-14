@@ -36,6 +36,9 @@ namespace RGSDL {
              * \param sdl_flags = additional SDL_Flags for SDL_Init
              *                    SDL_INIT_VIDEO will always be on by default
              *
+             * \param window_flags = defines additional SDL_WINDOW - Flags
+             *                    SDL_WINDOW_RESIZABLE|SDL_WINDOW_SHOWN are always set
+             *
              * \return the created Engine instance 
              */
 
@@ -45,7 +48,8 @@ namespace RGSDL {
                     float targetDPI,
                     const char *title, 
                     Scene* initialScene,
-                    uint32_t sdl_flags = 0
+                    uint32_t sdl_flags = 0,
+                    uint32_t window_flags=0
                     );
 
             SDL_Color backgroundColor;

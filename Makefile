@@ -16,29 +16,16 @@ LIBS:= -I./headers -lSDL2main -lSDL2 -lSDL2_image
 COMMON_FLAGS:=-std=c++2a -Wno-unknown-pragmas
 
 DEBUG_FLAGS:=-Wall -g -DDEBUG_BUILD
-RELEASE_FLAGS:=-mwindows 
+RELEASE_FLAGS:= 
 
 CPPFILES:=$(shell find ./src -name *.cpp | xargs)
 OBJFILES:=$(patsubst ./%.cpp,build/%.o,$(CPPFILES))
 
-debug:FLAGS:=$(COMMON_FLAGS) $(DEBUG_FLAGS)
-debug: $(OBJFILES)
-	$(CPP) $^ $(FLAGS) $(LIBS) -o $@.$(TARGET) 
-
 lib:FLAGS:=$(COMMON_FLAGS) $(RELEASE_FLAGS)
 lib: $(OBJFILES)
+	$(shell rm -rf ./lib)
 	$(shell mkdir -p lib)
 	ar q lib/lib$(TARGET).a $^
-
-gdb: debug
-	gdb ./$^.$(TARGET)
-
-run: debug
-	./$^.$(TARGET)
-
-release:FLAGS:=$(COMMON_FLAGS) $(RELEASE_FLAGS)
-release: $(OBJFILES)
-	$(CPP) $^ $(FLAGS) $(LIBS) -o $(TARGET)
 
 build/%.o: ./%.cpp
 	$(shell mkdir -p `dirname $@`)

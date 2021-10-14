@@ -1,5 +1,5 @@
-#include "../headers/Texture.h"
-#include "../headers/Engine.h"
+#include "../Texture.h"
+#include "../Engine.h"
 
 namespace RGSDL {
     Texture Texture::clone() const {
