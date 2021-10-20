@@ -28,7 +28,7 @@ namespace RGSDL {
         ,game(eg), position({0, 0}), tileset(ts.clone())
         ,tilesetTilesPerRow(ts.originalSize.x / tw)
         ,rendered_map(), dirty(true)
-        { /*{{{*/
+        {
             int pw = game->viewPortSize.x;
             int ph = game->viewPortSize.y;
 
@@ -57,18 +57,18 @@ namespace RGSDL {
             rendered_map.crop.w = pw;
             rendered_map.crop.h = ph;
 
-        } /*}}}*/
+        }
 
-    void TilemapData::draw(Engine* game) { /*{{{*/
+    void TilemapData::draw(Engine* game) {
         rerender(game);
         SDL_RenderCopy(game->renderer, rendered_map.sdl_texture, &rendered_map.crop, &rendered_map.crop);
-    } /*}}}*/
+    }
 
-    void TilemapData::changeMapTile(int x, int y, int newTileIndex) { /*{{{*/ 
+    void TilemapData::changeMapTile(int x, int y, int newTileIndex) {
         tileIndices[y * mapSize.x + x] = newTileIndex;
         //TODO: Only set dirty, if changed tile is within few
         dirty = true;
-    } /*}}}*/
+    } 
 
     void TilemapData::changeTileSet(const Texture &ts, int tw, int th) { /*{{{*/
 
@@ -82,29 +82,29 @@ namespace RGSDL {
         dirty = true;
     } /*}}}*/
 
-    void TilemapData::scrollMap(int distX, int distY)  { /*{{{*/
+    void TilemapData::scrollMap(int distX, int distY)  {
         position.x += distX;
         position.y += distY;
         dirty = true;
-    } /*}}}*/
-    void TilemapData::scrollMap(const Vec2<int>& distance) { /*{{{*/
+    }
+    void TilemapData::scrollMap(const Vec2<int>& distance) {
         position.x += distance.x;
         position.y += distance.y;
         dirty = true;
-    } /*}}}*/
+    }
 
-    void TilemapData::setPositon(int x, int y) { /*{{{*/
+    void TilemapData::setPosition(int x, int y) {
         position.x = x;
         position.y = y;
         dirty = true;
-    } /*}}}*/
-    void TilemapData::setPositon(const Vec2<int>& pos) { /*{{{*/
+    }
+    void TilemapData::setPosition(const Vec2<int>& pos) {
         position.x = pos.x;
         position.y = pos.y;
         dirty = true;
-    } /*}}}*/
+    }
 
-    void TilemapData::rerender(Engine* game) {/*{{{*/
+    void TilemapData::rerender(Engine* game) {
         int index = 0, tx = 0, ty = 0;
         if(!dirty or !game) return;
 
@@ -156,13 +156,13 @@ namespace RGSDL {
         SDL_SetRenderTarget(game->renderer, target);
         dirty = false;
 
-    }/*}}}*/
+    }
 
-    TilemapData::~TilemapData() {/*{{{*/
+    TilemapData::~TilemapData() {
         if(rendered_map.sdl_texture)
             SDL_DestroyTexture(rendered_map.sdl_texture);
         free(tileIndices);
-    }/*}}}*/
+    }
 
 }
 //}}}

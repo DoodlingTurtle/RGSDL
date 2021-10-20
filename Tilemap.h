@@ -20,8 +20,8 @@ namespace RGSDL {
             void scrollMap(int distX, int distY);
             void scrollMap(const Vec2<int>& distance);
             
-            void setPositon(int x, int y);
-            void setPositon(const Vec2<int>&);
+            void setPosition(int x, int y);
+            void setPosition(const Vec2<int>&);
 
             void draw(Engine* game);
 
@@ -35,11 +35,12 @@ namespace RGSDL {
             int* tileIndices;
             bool dirty;
 
+            Texture tileset; 
+
         private:
             Engine* game;
             Vec2<int> position;
 
-            Texture tileset; 
             int tilesetTilesPerRow;
 
             /** needs to be called when ever the tileset changes */
