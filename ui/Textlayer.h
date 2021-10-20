@@ -12,8 +12,12 @@ namespace RGSDL::UI {
         public:
 
             void setText(const char* characters);
+            int getTextPXWidth();
+            int getTextPXHeight();
 
         private:
+            int pxw, pxh;
+
             TextlayerData(
                     Engine* game 
                     , const Texture &font
