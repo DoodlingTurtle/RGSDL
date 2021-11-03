@@ -17,39 +17,22 @@ To see what features are available check the .h - files in the src/engine folder
 #include "./engine/Engine.h"
 #include "./engine/Scene.h"
 
+#include "./MainScene.h"
+// You need to provide your own
+// have a look at the example project to get an idea what a Scene looks like.
+
 class MainScene  {}
 
 int main(int argc, char** argv)
 
-    Engine game;
-    return game start(
-        argv, argc
-        256, 192, "RGSDL-Demo"
-    );
+  MainScene ms = MainScene();
 
-    Engine* game = Engine::create(); 
+  Engine game;
 
-    if(game) {
+  // 256 x 192 at 96dpi = NintendoDSi XL Screensize
+  // The engine will scale the window so that is will take roughly 4 to 5 inches on your current screen
+  return game.start( argc, argv, 256, 192, 96.0f, "Example-Project", &ms);
 
-    // OnStart Area
-    // .. initialize your ressource here
-
-    while (game->tick()) {
-        float deltaTime = game->getDeltaTime(); // time passed since the last windowTick()
-
-        // ...
-        // do all your Main-Game stuff here ( updates, rendering, etc. ).
-        // See src/main.cpp for an example
-        //
-        // you can look at 'src/engine/Engine.h' to see, what you can do.
-        // All other SDL2 functions are awailable as well
-
-     }
-
-    // On End Area
-    // .. Destroy your ressource here
-
-    delete game
 }
 
 ```
