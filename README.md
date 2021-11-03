@@ -1,5 +1,5 @@
 # RGSDL
-An attempt to create "GameEngine" like Framework arround SDL2
+An attempt to create "GameEngine" like Framework around SDL2
 
 To see what features are available check the .h - files in the src/engine folder.
 
