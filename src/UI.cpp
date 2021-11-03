@@ -1,7 +1,7 @@
 #include "../UI.h"
 #include "./Textlayer.cpp"
 #include "../Engine.h"
-#include "../Macros.h"
+#include "../Utils.h"
 #include <unordered_set>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_render.h>
@@ -13,7 +13,7 @@ namespace RGSDL::UI {
     struct ButtonRect {
         int id;
         SDL_Rect rect;
-        std::function<void(int id, int x, int y, bool pressed)> onClick;
+        std::function<bool(int id, int x, int y, bool pressed)> onClick;
     };
 
     struct ButtonRender {
@@ -48,7 +48,7 @@ namespace RGSDL::UI {
             const SDL_Color& inactiveColor,
             const SDL_Color& activeColor,
             const char* label, 
-            const std::function<void(int id, int x, int y, bool pressed)> onClick)
+            const std::function<bool(int id, int x, int y, bool pressed)> onClick)
     {
         if (CNT_MAX_BUTTONS > cntButtons) {
 
@@ -101,12 +101,9 @@ namespace RGSDL::UI {
                         mp.y <= buttonrects[a].rect.y+buttonrects[a].rect.h
                         ); 
 
-                if(!newState && oldState != activeButtons.end()) {
-                    activeButtons.erase(oldState);
-                    buttonrects[a].onClick(buttonrects[a].id, mp.x, mp.y, false);
-                }else if(newState && oldState == activeButtons.end()) {
-                    activeButtons.emplace(a);
-                    buttonrects[a].onClick(buttonrects[a].id, mp.x, mp.y, true);
+                if(newState && oldState == activeButtons.end()) {
+                    if(buttonrects[a].onClick(buttonrects[a].id, mp.x, mp.y, true))
+                        activeButtons.emplace(a);
                 }
             } 
         }

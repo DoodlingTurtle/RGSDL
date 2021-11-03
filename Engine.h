@@ -47,7 +47,10 @@ public:
         const char* title,
         Scene* initialScene,
         uint32_t sdl_flags = 0,
-        uint32_t window_flags = 0);
+        uint32_t window_flags = 0,
+        uint32_t windowX = SDL_WINDOWPOS_CENTERED_DISPLAY(0),
+        uint32_t windowY = SDL_WINDOWPOS_CENTERED_DISPLAY(0)
+    );
 
     SDL_Color backgroundColor;
     SDL_Color borderColor;

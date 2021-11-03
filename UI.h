@@ -13,7 +13,7 @@ void registerButton(
     int w, int h,
     const SDL_Color& inactiveColor,
     const SDL_Color& activeColor,
-    const char* label, const std::function<void(int id, int x, int y, bool pressed)> onClick);
+    const char* label, const std::function<bool(int id, int x, int y, bool pressed)> onClick);
 
 void onUpdate(RGSDL::Engine* game);
 

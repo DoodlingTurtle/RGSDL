@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./Macros.h"
+#include "./Utils.h"
 #include <SDL2/SDL_rect.h>
 
 namespace RGSDL {

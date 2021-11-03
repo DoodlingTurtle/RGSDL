@@ -1,5 +1,5 @@
 #include "../Engine.h"
-#include "../Macros.h"
+#include "../Utils.h"
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_pixels.h>
 #include <algorithm>
@@ -38,7 +38,10 @@ int Engine::start(
     const char* title,
     Scene* initialScene,
     uint32_t sdl_flags,
-    uint32_t window_flags)
+    uint32_t window_flags,
+    uint32_t windowX,
+    uint32_t windowY
+)
 { 
 
     if (initialScene == nullptr) {
@@ -59,7 +62,7 @@ int Engine::start(
     float ws = ceil(ddpi / targetDPI);
 
     currentScene = initialScene;
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED_DISPLAY(0), SDL_WINDOWPOS_CENTERED_DISPLAY(0), windowWidth * ws, windowHeight * ws, window_flags | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(title, windowX, windowY, windowWidth * ws, windowHeight * ws, window_flags | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
 
     if (window == nullptr) {
         Error("SDL-WindowError: " << SDL_GetError());
