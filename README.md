@@ -18,19 +18,16 @@ To see what features are available check the .h - files in the src/engine folder
 #include "./engine/Scene.h"
 
 #include "./MainScene.h"
-// You need to provide your own
+// You need to provide your own scene
 // have a look at the example project to get an idea what a Scene looks like.
-
-class MainScene  {}
 
 int main(int argc, char** argv)
 
   MainScene ms = MainScene();
-
   Engine game;
 
   // 256 x 192 at 96dpi = NintendoDSi XL Screensize
-  // The engine will scale the window so that is will take roughly 4 to 5 inches on your current screen
+  // The engine will scale the window so that it will take roughly 4 to 5 inches on your current screen
   return game.start( argc, argv, 256, 192, 96.0f, "Example-Project", &ms);
 
 }
@@ -39,7 +36,7 @@ int main(int argc, char** argv)
 
 ### How to compile it:
 - Make sure your compiler has access to SDL2 and SDL2_image (`-lSDL2 -lSDL2main -lSDL2_image`) \
-- Put the `SDL2.dll`, `SDL2_image.dll` as well as the other required DLLs into the same folder, where your compiled binary will be.
+- for Windows put the `SDL2.dll`, `SDL2_image.dll` as well as the other required DLLs into the same folder, where your compiled binary will be.
 
 - If you use linux or msys, then you can use the Makefile in this project\
 to compile it.
@@ -55,6 +52,8 @@ to compile it.
 - ⬜ Documentation 
 
 ## DONE:
+- ✔ Implement reading of INI files
+- ✔ Add functions to display buttons on screen 
 - ✔ Implement the Scene-System (from [WASM_WASteroids](https://github.com/DoodlingTurtle/WASM_WAsteroids))
 - ✔ Create SDL-Window and Close-Event
 - ✔ Make window resizeable
