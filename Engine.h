@@ -81,6 +81,15 @@ public:
    */
     void clearAll();
 
+    /** \brief SDL_RenderFillRect passthrough*/
+    void fillRect(const SDL_Rect& r);
+
+    /** \brief SDL_SetRenderDrawColor passthrough*/
+    void setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+
+    /** \brief SDL_SetRenderDrawColor passthrough*/
+    void setDrawColor( const SDL_Color& c );
+
 #pragma endregion
 
 #pragma region Texture functions
