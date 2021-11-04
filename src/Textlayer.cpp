@@ -2,62 +2,58 @@
 
 namespace RGSDL::UI {
 
-void TextlayerData::setText(const char* characters)
-{
-    int x = 0, y = 0;
-    const char* c = &characters[0];
+    void TextlayerData::setText( const char* characters )
+    {
+        int         x = 0, y = 0;
+        const char* c = &characters[ 0 ];
 
-    memset(tileIndices, 0, sizeof(int) * tileCnt);
+        memset( tileIndices, 0, sizeof( int ) * tileCnt );
 
-    pxw = 0;
-    pxh = 0;
+        pxw = 0;
+        pxh = 0;
 
-    while (*c != '\0') {
-        if (*c == '\n') {
-            y++;
+        while ( *c != '\0' ) {
+            if ( *c == '\n' ) {
+                y++;
 
-            if (pxw < x)
-                pxw = x;
+                if ( pxw < x ) pxw = x;
 
-            x = 0;
+                x = 0;
+                c++;
+                continue;
+            }
+            else if ( x >= mapSize.x ) {
+                y++;
+
+                if ( pxw < x ) pxw = x;
+
+                x = 0;
+            }
+
+            if ( y >= mapSize.y ) break;
+
+            tileIndices[ y * mapSize.x + x ] = *c - 32;
+            x++;
             c++;
-            continue;
-        } else if (x >= mapSize.x) {
-            y++;
-
-            if (pxw < x)
-                pxw = x;
-
-            x = 0;
         }
 
-        if (y >= mapSize.y)
-            break;
+        if ( pxw < x ) pxw = x;
 
-        tileIndices[y * mapSize.x + x] = *c - 32;
-        x++;
-        c++;
+        pxw *= tileset.crop.w;
+        pxh = ( y + 1 ) * tileset.crop.h;
+
+        dirty = true;
     }
 
-    if (pxw < x)
-        pxw = x;
+    int TextlayerData::getTextPXWidth() { return pxw; }
+    int TextlayerData::getTextPXHeight() { return pxh; }
 
-    pxw *= tileset.crop.w;
-    pxh = (y + 1) * tileset.crop.h;
+    TextlayerData::TextlayerData(
+        Engine* game, const Texture& font, const int* buffer, int fontPxWith, int fontPxHeight,
+        int maxLettersPerRow, int maxRows )
+        : TilemapData( game, font, buffer, maxLettersPerRow, maxRows, fontPxWith, fontPxHeight ),
+          pxw( 0 ), pxh( 0 )
+    {
+    }
 
-    dirty = true;
-}
-
-int TextlayerData::getTextPXWidth() { return pxw; }
-int TextlayerData::getTextPXHeight() { return pxh; }
-
-TextlayerData::TextlayerData(
-    Engine* game, const Texture& font, const int* buffer, int fontPxWith, int fontPxHeight, int maxLettersPerRow, int maxRows)
-    : TilemapData(
-        game, font, buffer, maxLettersPerRow, maxRows, fontPxWith, fontPxHeight)
-    , pxw(0)
-    , pxh(0)
-{
-}
-
-}
+} // namespace RGSDL::UI

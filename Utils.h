@@ -26,6 +26,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <limits>
 namespace RGSDL::Utils {
 
     typedef std::unordered_map<std::string, std::string> IniGroup;
@@ -35,8 +36,7 @@ namespace RGSDL::Utils {
 
     IniGroup readIniGroup( const IniType& ini, const std::string& group );
 
-    std::string
-      readIniGroupValue( const IniGroup& grp, const std::string& key, const std::string def = std::string( "" ) );
+    std::string readIniGroupValue( const IniGroup& grp, const std::string& key, const std::string def = "" );
 
     int readIniGroupInt( const IniGroup& grp, const std::string& key, const int def = 0 );
 
@@ -44,7 +44,6 @@ namespace RGSDL::Utils {
 
     int stringSplit(
         const std::string& src, const std::string& delimiter, std::vector<std::string>& fillin,
-        bool trimResult = true, int maxsplits = std::numeric_limits<int>::max()
-    );
+        bool trimResult = true, int maxsplits = std::numeric_limits<int>::max() );
 
 } // namespace RGSDL::Utils

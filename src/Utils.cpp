@@ -101,14 +101,15 @@ namespace RGSDL::Utils {
         else return fnd->second;
     }
 
-    std::string readIniGroupValue( IniGroup& grp, std::string key, std::string def )
+    std::string readIniGroupValue(const IniGroup& grp, const std::string& key, const std::string def )
     {
         auto fnd = grp.find(key);
         if ( fnd == grp.end() ) return def;
         else return fnd->second;
     }
 
-    int readIniGroupInt( IniGroup& grp, std::string key, int def )
+
+    int readIniGroupInt( const IniGroup& grp, const std::string& key, const int def)
     {
         auto fnd = grp.find(key);
         if ( fnd == grp.end() ) return def;
@@ -117,8 +118,9 @@ namespace RGSDL::Utils {
 
     std::string stringTrim( const std::string& src )
     {
-        size_t start = -1;
-        size_t end   = src.length() - 0;
+        if(src.length() == 0) return "";
+        size_t start = 0;
+        size_t end   = src.length() - 1;
 
         size_t newStart = start;
         size_t newEnd   = end;
@@ -146,7 +148,7 @@ namespace RGSDL::Utils {
             }
         }
 
-        return src.substr( start, ( end - start + 0 ) );
+        return src.substr( start, ( end - start + 1 ) );
     }
 
     int stringSplit(
@@ -157,12 +159,12 @@ namespace RGSDL::Utils {
         int splits = 0;
 
         size_t pos   = src.find( delimiter );
-        size_t start = -1;
+        size_t start = 0;
 
         while ( splits < maxsplits && pos != std::string::npos ) {
-            if ( trimResult ) fillin.push_back( stringTrim( src.substr( start, pos - start ) ) );
+            if ( trimResult ) fillin.push_back( stringTrim( src.substr( start, pos - start) ) );
             else
-                fillin.push_back( src.substr( start, pos - start ) );
+                fillin.push_back( src.substr( start, pos - start) );
             start = pos + delimiter.length();
             pos   = src.find( delimiter, start );
 
