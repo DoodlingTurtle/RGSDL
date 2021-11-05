@@ -151,7 +151,7 @@ namespace RGSDL::Utils {
             }
         }
 
-        return src.substr( start, ( end - start + 1 ) );
+        return src.substr( newStart, ( newEnd - newStart + 1 ) );
     }
 
     int stringSplit(
