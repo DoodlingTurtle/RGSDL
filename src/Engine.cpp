@@ -59,6 +59,9 @@ namespace RGSDL {
             return -1;
         }
 
+        SDL_GetWindowPosition( window, &windowPosition.x, &windowPosition.y );
+        SDL_GetWindowSize( window, &windowSize.x, &windowSize.y );
+
         renderer =
             SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
         if ( renderer == nullptr ) { /*{{{*/
@@ -131,7 +134,24 @@ namespace RGSDL {
         else
             _deltaTime /= 1000.0f;
 
+        // Remove all keys that were reported as released in the previous cycle
+        for ( auto key : keys_released ) {
+            auto it = keys_held.find( key );
+            if ( it != keys_held.end() ) keys_held.erase( it );
+
+            it = keys_pressed.find( key );
+            if ( it != keys_pressed.end() ) keys_pressed.erase( it );
+        }
         keys_held.insert( keys_pressed.begin(), keys_pressed.end() );
+
+        // Remove all mouse buttons that were reported as released in the previous cycle
+        for ( auto mouse : mouse_released ) {
+            auto it = mouse_held.find( mouse );
+            if ( it != mouse_held.end() ) mouse_held.erase( it );
+
+            it = mouse_pressed.find( mouse );
+            if ( it != mouse_pressed.end() ) mouse_pressed.erase( it );
+        }
         mouse_held.insert( mouse_pressed.begin(), mouse_pressed.end() );
 
         keys_pressed.clear();
@@ -140,16 +160,21 @@ namespace RGSDL {
         mouse_released.clear();
 
         SDL_Event event;
-        while ( SDL_PollEvent( &event ) ) { /*{{{*/
+        while ( SDL_PollEvent( &event ) ) {
             switch ( event.type ) {
                 case SDL_MOUSEBUTTONDOWN: {
                     mouse_pressed.emplace( event.button.button );
                 } break;
 
                 case SDL_MOUSEBUTTONUP: {
-                    mouse_released.emplace( event.button.button );
+
                     auto it = mouse_held.find( event.button.button );
-                    if ( it != mouse_held.end() ) mouse_held.erase( it );
+                    if ( mouse_held.find( event.button.button ) != mouse_held.end() ||
+                         mouse_pressed.find( event.button.button ) != mouse_pressed.end()
+
+                    )
+                        mouse_released.emplace( event.button.button );
+
                 } break;
 
                 case SDL_KEYDOWN: {
@@ -160,18 +185,47 @@ namespace RGSDL {
                 } break;
 
                 case SDL_KEYUP: {
-                    keys_released.emplace( event.key.keysym.sym );
-                    auto it = keys_held.find( event.key.keysym.sym );
-                    if ( it != keys_held.end() ) keys_held.erase( it );
+                    if ( keys_held.find( event.key.keysym.sym ) != keys_held.end() ||
+                         keys_pressed.find( event.key.keysym.sym ) != keys_pressed.end() )
+                        keys_released.emplace( event.key.keysym.sym );
 
                     if ( event.key.keysym.sym == last_pressed ) last_pressed = 0;
                 } break;
 
                 case SDL_MOUSEMOTION: mousePosition = { event.motion.x, event.motion.y }; break;
 
+                case SDL_WINDOWEVENT:
+                    switch ( event.window.event ) {
+
+                        case SDL_WINDOWEVENT_MOVED:
+                            SDL_GetWindowPosition( window, &windowPosition.x, &windowPosition.y );
+                            break;
+
+                        case SDL_WINDOWEVENT_RESIZED:
+                            SDL_GetWindowSize( window, &windowSize.x, &windowSize.y );
+                            break;
+
+                        case SDL_WINDOWEVENT_LEAVE:
+
+                            for ( auto m : mouse_pressed )
+                                mouse_released.emplace( m );
+
+                            for ( auto m : mouse_held )
+                                mouse_released.emplace( m );
+
+                            for ( auto k : keys_pressed )
+                                keys_released.emplace( k );
+
+                            for ( auto k : keys_held )
+                                keys_held.emplace( k );
+
+                            break;
+                    }
+                    break;
+
                 case SDL_QUIT: return false; break;
             }
-        } /*}}}*/
+        }
 
         if ( !currentScene->onUpdate( this, _deltaTime ) ) { /*{{{*/
             currentScene->started = false;

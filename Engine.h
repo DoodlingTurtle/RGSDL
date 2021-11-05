@@ -55,10 +55,12 @@ public:
     SDL_Color backgroundColor;
     SDL_Color borderColor;
 
-    Vec2<int> mousePosition;
 #pragma endregion
 
 #pragma region Window Controlls
+    Vec2<int> windowPosition;
+    Vec2<int> windowSize;
+
     void toggleFullscreen();
 #pragma endregion
 
@@ -125,6 +127,8 @@ public:
 #pragma endregion
 
 #pragma region Input handling functions
+    Vec2<int> mousePosition;
+
     bool keyPressed(SDL_Keycode code);
     bool keyHeld(SDL_Keycode code);
     bool keyReleased(SDL_Keycode code);
