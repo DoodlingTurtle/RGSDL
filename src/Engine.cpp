@@ -326,6 +326,13 @@ namespace RGSDL {
         return keys_released.find( code ) != keys_released.end();
     }
 
+    bool Engine::mouseDown( uint8_t code )
+    {
+        return (
+            ( mouse_held.find( code ) != mouse_held.end() ) ||
+            ( mouse_pressed.find( code ) != mouse_pressed.end() ) );
+    }
+
     bool Engine::mousePressed( uint8_t code )
     {
         return mouse_pressed.find( code ) != mouse_pressed.end();

@@ -1,4 +1,5 @@
 #include "../Utils.h"
+#include <memory>
 
 namespace RGSDL::Utils {
 
@@ -129,7 +130,7 @@ namespace RGSDL::Utils {
         size_t newEnd   = end;
 
         char ch = src.at( start );
-        while ( ch == ' ' || ch == '\t' ) {
+        while ( ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' ) {
             try {
                 newStart++;
                 ch = src.at( newStart );
@@ -141,7 +142,7 @@ namespace RGSDL::Utils {
         start = newStart;
 
         ch = src.at( end );
-        while ( newEnd >= start && ( ch == ' ' || ch == '\t' ) ) {
+        while ( newEnd >= start && ( ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' ) ) {
             try {
                 newEnd--;
                 ch = src.at( newEnd );
@@ -186,6 +187,23 @@ namespace RGSDL::Utils {
             fillin.push_back( tmp );
 
         return splits;
+    }
+
+    void exec( const std::string& command, std::vector<std::string>* fillin, bool trimLines )
+    {
+        char                                       buffer[ 256 ];
+        std::unique_ptr<FILE, decltype( &pclose )> pipe( popen( command.c_str(), "r" ), pclose );
+        if ( !pipe ) {
+            Error( "popen() failed!" );
+            return;
+        }
+
+        if ( trimLines )
+            while ( fgets( buffer, 256, pipe.get() ) != nullptr )
+                fillin->push_back( RGSDL::Utils::stringTrim( std::string( buffer ) ) );
+        else
+            while ( fgets( buffer, 256, pipe.get() ) != nullptr )
+                fillin->push_back( std::string( buffer ) );
     }
 
 } // namespace RGSDL::Utils

@@ -133,9 +133,18 @@ public:
     bool keyHeld(SDL_Keycode code);
     bool keyReleased(SDL_Keycode code);
 
+    /** \brief tells if a mouse button has been just pressed or is held at the moment */
+    bool mouseDown(Uint8 code);
+
+    /** \brief tells if a mouse button has been just pressed*/
     bool mousePressed(Uint8 code);
+
+    /** \brief tells if a mouse button is held down at the moment */
     bool mouseHeld(Uint8 code);
+
+    /** \brief tells if a mouse button was released this cycle */
     bool mouseReleased(Uint8 code);
+
 #pragma endregion
 
     ~Engine();

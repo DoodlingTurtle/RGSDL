@@ -46,4 +46,12 @@ namespace RGSDL::Utils {
         const std::string& src, const std::string& delimiter, std::vector<std::string>& fillin,
         bool trimResult = true, int maxsplits = std::numeric_limits<int>::max() );
 
+    /** \brief executes `command` and writes all lines to output
+     * 
+     * \param command - a shell command
+     * \param output  - will contain all lines (max length 256 byte per line) that were printed to std::out 
+     * \param trimLines - if true, all linebreaks and whitespaces at the beginning and end of each line are removed
+     */ 
+    void exec(const std::string& command, std::vector<std::string>* output, bool trimLines = false);
+
 } // namespace RGSDL::Utils
