@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 namespace RGSDL {
     template <typename T> struct Vec2 {
         T x, y;
@@ -46,6 +48,11 @@ namespace RGSDL {
         }
         operator Vec2<int>() {
             return Vec2<int>{static_cast<int>(x), static_cast<int>(y)};
+        }
+
+        friend std::ostream& operator<< (std::ostream& os, Vec2<T>& v) {
+            os << "{" << v.x << ", " << v.y << "}";
+            return os;
         }
 
         Vec2<T>(T x, T y) {

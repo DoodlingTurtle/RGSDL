@@ -21,7 +21,8 @@ namespace RGSDL {
     Engine::Engine()
         : backgroundColor( { 0, 0, 0, 255 } ), borderColor( { 0, 0, 0, 255 } ),
           mousePosition( { 0, 0 } ), currentScene( nullptr ), window( nullptr ),
-          renderer( nullptr ), _ticks_passed( 0 ), _deltaTime( 0.0f ), layers(), currentLayer( 0 )
+          renderer( nullptr ), _ticks_passed( 0 ), _deltaTime( 0.0f ), layers(), currentLayer( 0 ),
+          touchOffset(), touchSizeModifier(), touchDevice( 0 )
     {
         memset( layers, 0, sizeof( SDL_Texture* ) * 256 );
     }
@@ -40,6 +41,7 @@ namespace RGSDL {
             Error( "SDL-Init error: " << SDL_GetError() );
             return -1;
         }
+
         if ( IMG_Init( IMG_INIT_PNG ) == 0 ) {
             Error( "Failed to initialize SDL2_image: " << IMG_GetError() );
             return -1;
@@ -91,6 +93,7 @@ namespace RGSDL {
             if ( !strcmp( argv[ a ], "--fullscreen" ) ) this->toggleFullscreen();
         }
 
+        updateWindowScale();
         SDL_SetRenderTarget( renderer, layers[ 0 ] );
 
         while ( tick() ) {}
@@ -110,9 +113,40 @@ namespace RGSDL {
         return 0;
     }
 
-    bool Engine::tick()
+    void Engine::updateWindowScale()
     {
 
+        float sx = ( (float)windowSize.x / (float)viewPortSize.x );
+        float sy = ( (float)windowSize.y / (float)viewPortSize.y );
+
+        bool overy = ( sx * viewPortSize.y ) > windowSize.y;
+        bool overx = ( sy * viewPortSize.x ) > windowSize.x;
+
+        float vsx = windowSize.x;
+        float vsy = windowSize.y;
+
+        if ( overy ) vsx = viewPortSize.x * sy;
+        else if ( overx )
+            vsy = viewPortSize.y * sx;
+
+        float ffx = (float)windowSize.x / (float)vsx;
+        float ffy = (float)windowSize.y / (float)vsy;
+
+        float ox = 0.0f, oy = 0.0f;
+        if ( overy ) ox = ( ffx - ffy ) / 2.0f;
+        else if ( overx )
+            oy = ( ffy - ffx ) / 2.0f;
+
+        touchSizeModifier.x = ffx;
+        touchSizeModifier.y = ffy;
+        touchOffset.x       = ox;
+        touchOffset.y       = oy;
+
+        touchDevice = SDL_GetTouchDevice( 0 );
+    }
+
+    bool Engine::tick()
+    {
         if ( !currentScene ) return false;
         else if ( !currentScene->started ) {
             if ( !currentScene->onStart( this ) ) return false;
@@ -167,14 +201,9 @@ namespace RGSDL {
                 } break;
 
                 case SDL_MOUSEBUTTONUP: {
-
-                    auto it = mouse_held.find( event.button.button );
                     if ( mouse_held.find( event.button.button ) != mouse_held.end() ||
-                         mouse_pressed.find( event.button.button ) != mouse_pressed.end()
-
-                    )
+                         mouse_pressed.find( event.button.button ) != mouse_pressed.end() )
                         mouse_released.emplace( event.button.button );
-
                 } break;
 
                 case SDL_KEYDOWN: {
@@ -192,20 +221,23 @@ namespace RGSDL {
                     if ( event.key.keysym.sym == last_pressed ) last_pressed = 0;
                 } break;
 
-                case SDL_MOUSEMOTION: mousePosition = { event.motion.x, event.motion.y }; break;
+                case SDL_MOUSEMOTION: {
+                    mousePosition = { event.motion.x, event.motion.y };
+                } break;
 
-                case SDL_WINDOWEVENT:
+                case SDL_WINDOWEVENT: {
                     switch ( event.window.event ) {
 
-                        case SDL_WINDOWEVENT_MOVED:
+                        case SDL_WINDOWEVENT_MOVED: {
                             SDL_GetWindowPosition( window, &windowPosition.x, &windowPosition.y );
-                            break;
+                        } break;
 
-                        case SDL_WINDOWEVENT_RESIZED:
+                        case SDL_WINDOWEVENT_RESIZED: {
                             SDL_GetWindowSize( window, &windowSize.x, &windowSize.y );
-                            break;
+                            updateWindowScale();
+                        } break;
 
-                        case SDL_WINDOWEVENT_LEAVE:
+                        case SDL_WINDOWEVENT_LEAVE: {
 
                             for ( auto m : mouse_pressed )
                                 mouse_released.emplace( m );
@@ -219,22 +251,75 @@ namespace RGSDL {
                             for ( auto k : keys_held )
                                 keys_held.emplace( k );
 
-                            break;
+                        } break;
                     }
-                    break;
+                } break;
 
                 case SDL_QUIT: return false; break;
             }
         }
 
-        if ( !currentScene->onUpdate( this, _deltaTime ) ) { /*{{{*/
+        if ( touchDevice ) {
+
+            // clear the realeased fingers list of the last cycle
+            touchReleased.clear();
+
+            int         touches = SDL_GetNumTouchFingers( touchDevice );
+            SDL_Finger* finger;
+
+            // Register new coordindates for all held fingers/touches
+            touchPositions.clear();
+            for ( int a = 0; a < touches; a++ ) {
+                finger = SDL_GetTouchFinger( touchDevice, a );
+                touchPositions.emplace(
+                    finger->id,
+                    Vec2<int>(
+                        ( finger->x * touchSizeModifier.x + touchOffset.x ) * viewPortSize.x,
+                        ( finger->y * touchSizeModifier.y + touchOffset.y ) * viewPortSize.y ) );
+            }
+
+            // Move all hold buttons, without coordindate to the relased list
+            auto ith = touchHeld.begin();
+            while ( ith != touchHeld.end() ) {
+                if ( touchPositions.find( *ith ) == touchPositions.end() ) {
+                    touchReleased.emplace( *ith );
+                    touchHeld.erase( ith );
+                    ith = touchHeld.begin();
+                }
+                else
+                    ith++;
+            }
+
+            // Sort out all pressed buttons of the previous cycle
+            auto itp = touchPressed.begin();
+            while ( itp != touchPressed.end() ) {
+                if ( touchPositions.find( *itp ) == touchPositions.end() ) {
+                    touchReleased.emplace( *itp );
+                }
+                else {
+                    touchHeld.emplace( *itp );
+                }
+                itp++;
+            }
+            touchPressed.clear();
+
+            // Put all new coordinates it the pressed list
+            auto itc = touchPositions.begin();
+            while ( itc != touchPositions.end() ) {
+                if ( touchHeld.find( itc->first ) == touchHeld.end() )
+                    touchPressed.emplace( itc->first );
+                itc++;
+            }
+        }
+
+        if ( !currentScene->onUpdate( this, _deltaTime ) ) {
             currentScene->started = false;
             Scene* next           = currentScene->onEnd( this );
             if ( !currentScene->persistent ) delete currentScene;
 
             currentScene = next;
             return true;
-        } /*}}}*/
+        }
 
         currentScene->onDraw( this );
 
@@ -256,6 +341,12 @@ namespace RGSDL {
     }
 
     Engine::~Engine() {}
+
+    void Engine::mergeMouseAndTouch( bool state )
+    {
+        SDL_SetHint( SDL_HINT_MOUSE_TOUCH_EVENTS, state ? "1" : "0" );
+        SDL_SetHint( SDL_HINT_TOUCH_MOUSE_EVENTS, state ? "1" : "0" );
+    }
 
 #pragma endregion
 
