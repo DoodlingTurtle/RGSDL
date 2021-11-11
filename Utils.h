@@ -46,6 +46,8 @@ namespace RGSDL::Utils {
         const std::string& src, const std::string& delimiter, std::vector<std::string>& fillin,
         bool trimResult = true, int maxsplits = std::numeric_limits<int>::max() );
 
+    std::string stringJoin(const std::string& glue, const std::vector<std::string>& list);
+
     /** \brief executes `command` and writes all lines to output
      * 
      * \param command - a shell command

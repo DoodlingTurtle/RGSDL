@@ -206,4 +206,14 @@ namespace RGSDL::Utils {
                 fillin->push_back( std::string( buffer ) );
     }
 
+    std::string stringJoin(const std::string& glue, const std::vector<std::string>& list) {
+        if(list.size() == 0) return "";
+
+        std::string ret = list[0];
+        for(int a = 1; a < list.size(); a++)
+            ret += glue + list[a];
+
+        return ret;
+    }
+
 } // namespace RGSDL::Utils
