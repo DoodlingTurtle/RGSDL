@@ -56,6 +56,8 @@ namespace RGSDL {
         Vec2<int> windowSize;
 
         void toggleFullscreen();
+
+        void msgError(char const* title, char const* msg);
 #pragma endregion
 
 #pragma region Draw functions

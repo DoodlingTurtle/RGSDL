@@ -356,6 +356,11 @@ namespace RGSDL {
         SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
     }
 
+    void Engine::msgError(char const* t, char const* m) {
+        Error(m);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, t, m, window);
+    }
+
 #pragma endregion
 
 #pragma region Draw functions
