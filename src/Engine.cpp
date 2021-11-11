@@ -274,8 +274,8 @@ namespace RGSDL {
                 touchPositions.emplace(
                     finger->id,
                     Vec2<int>(
-                        ( finger->x * touchSizeModifier.x + touchOffset.x ) * viewPortSize.x,
-                        ( finger->y * touchSizeModifier.y + touchOffset.y ) * viewPortSize.y ) );
+                        ( finger->x * touchSizeModifier.x - touchOffset.x ) * viewPortSize.x,
+                        ( finger->y * touchSizeModifier.y - touchOffset.y ) * viewPortSize.y ) );
             }
 
             // Move all hold buttons, without coordindate to the relased list
