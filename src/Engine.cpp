@@ -47,6 +47,15 @@ namespace RGSDL {
             return -1;
         }
 
+#if DEBUG_BUILD
+        Debug( "Video Driver: " << SDL_GetCurrentVideoDriver() );
+        Debug( "TouchInputs: " << SDL_GetNumTouchDevices() );
+        for ( int a = 0; a < SDL_GetNumTouchDevices(); a++ ) {
+            Debug(
+                "\t" << SDL_GetTouchDevice( a ) << ": "
+                     << SDL_GetTouchDeviceType( SDL_GetTouchDevice( a ) ) );
+        }
+#endif
         float ddpi;
         SDL_GetDisplayDPI( 0, &ddpi, nullptr, nullptr );
         float ws = ceil( ddpi / targetDPI );
@@ -66,7 +75,7 @@ namespace RGSDL {
 
         renderer =
             SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-        if ( renderer == nullptr ) { /*{{{*/
+        if ( renderer == nullptr ) {
             Error( "SDL-CreateRendererError: " << SDL_GetError() );
             return -1;
         }
@@ -356,9 +365,10 @@ namespace RGSDL {
         SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP );
     }
 
-    void Engine::msgError(char const* t, char const* m) {
-        Error(m);
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, t, m, window);
+    void Engine::msgError( char const* t, char const* m )
+    {
+        Error( m );
+        SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, t, m, window );
     }
 
 #pragma endregion
