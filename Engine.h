@@ -4,8 +4,8 @@
 #include <SDL2/SDL_keycode.h>
 
 #include <functional>
-#include <unordered_set>
 #include <set>
+#include <unordered_set>
 #include <vector>
 
 #include "./Scene.h"
@@ -20,44 +20,63 @@ namespace RGSDL {
         Engine();
 
 #pragma region Engine Setup
-        /** \brief aktivates an Engine - Instance and opens it in a Window
-         * \param argc - argc passed to main
-         * \param argv - argv passed to main
-         * \param viewPortWidth = width in px (not the window width)
-         * \param viewPortHight = height in px (not the window height)
-         * \param targetDPI = will be combined with the viewPort size and actual
-         * Screen DPI to define how big the window will be (example: a 256x192
-         * viewport with 103 dpi will should open a ~4 inch window (NDSi XL size))
-         * \param initialScene = each Engine requires a scene to run.
-         *                       if no scene is provided, then nothing will happen
+        /**
+         * @brief defines if, uppon calling Engine::start the ScreenDPI will be used To scale the
+         * to an appropriate size for the current pixel density of the screen
+         * if set to false, the windows scale will always be 1.
          *
-         * \param sdl_flags = additional SDL_Flags for SDL_Init
-         *                    SDL_INIT_VIDEO will always be on by default
-         *
-         * \param window_flags = defines additional SDL_WINDOW - Flags
-         *                    SDL_WINDOW_RESIZABLE|SDL_WINDOW_SHOWN are always set
-         *
-         * \return the created Engine instance
+         * Default: true
          */
-
-        int start(
-            int& argc, char**& argv, int viewPortWidth, int viewPortHight, float targetDPI,
-            const char* title, Scene* initialScene, uint32_t sdl_flags = 0,
-            uint32_t window_flags = 0, uint32_t windowX = SDL_WINDOWPOS_CENTERED_DISPLAY( 0 ),
-            uint32_t windowY = SDL_WINDOWPOS_CENTERED_DISPLAY( 0 ) );
+        bool scaleWindowToMatchDPI;
 
         SDL_Color backgroundColor;
         SDL_Color borderColor;
 
+        /** @brief aktivates an Engine - Instance and opens it in a Window
+         * @param argc - argc passed to main
+         * @param argv - argv passed to main
+         * @param viewPortWidth = width in px (not the window width)
+         * @param viewPortHight = height in px (not the window height)
+         * @param targetDPI = will be combined with the windowSize and actual
+         * Screen DPI to define the visual window size (example: a 256x192
+         * viewport with 103 dpi will should open a ~4 inch window (NDSi XL size))
+         * @param initialScene = each Engine requires a scene to run.
+         *                       if no scene is provided, then nothing will happen
+         *
+         * @param sdl_flags = additional SDL_Flags for SDL_Init
+         *                    SDL_INIT_VIDEO will always be on by default
+         *
+         * @param window_flags = defines additional SDL_WINDOW - Flags
+         *                    SDL_WINDOW_RESIZABLE|SDL_WINDOW_SHOWN are always set
+         *
+         * @param windowX = the initial pixel position of the screen
+         * @param windowY = the initial pixel position of the screen
+         *
+         * @param windowWidh = windowDimensions if Engine::scaleWindowToMatchDPI is true, they will
+         * be scaled to match match the windows visual size according to targetDPI (instead of the
+         * true pixelSize) If == 0 then the viewPortWidth will be used instead
+         * @param windowHeight = windowDimensions if Engine::scaleWindowToMatchDPI is true, they
+         * will be scaled to match match the windows visual size according to targetDPI (instead of
+         * the true pixelSize) If == 0 then the viewPortHeight will be used instead
+         *
+         * @return the returnstate of the application
+         */
+        int start(
+            int& argc, char**& argv, int viewPortWidth, int viewPortHeight, float targetDPI,
+            const char* title, Scene* initialScene, uint32_t sdl_flags = 0,
+            uint32_t window_flags = 0, uint32_t windowX = SDL_WINDOWPOS_CENTERED_DISPLAY( 0 ),
+            uint32_t windowY = SDL_WINDOWPOS_CENTERED_DISPLAY( 0 ), uint32_t windowWidth = 0,
+            uint32_t windowHeight = 0 );
+
 #pragma endregion
 
 #pragma region Window Controlls
-        Vec2<int> windowPosition;
+        Vec2<int> windowPosition;       
         Vec2<int> windowSize;
 
         void toggleFullscreen();
 
-        void msgError(char const* title, char const* msg);
+        void msgError( char const* title, char const* msg );
 #pragma endregion
 
 #pragma region Draw functions
@@ -65,27 +84,27 @@ namespace RGSDL {
         unsigned char getCurrentLayer();
 
         /** switches the Target for all following Draw calls
-         * \param zLayer = one of the 256 available layers
+         * @param zLayer = one of the 256 available layers
          *                 0 = lowest, 255 = highest
          */
         void switchLayer( unsigned char zLayer );
 
-        /** \brief clears the contents of the currently selected drawing layer
+        /** @brief clears the contents of the currently selected drawing layer
          *         (selected via Engine::switchLayer)
          */
         void clear();
 
-        /** \brief clears the contents of all 256 Layer of the Engine
+        /** @brief clears the contents of all 256 Layer of the Engine
          */
         void clearAll();
 
-        /** \brief SDL_RenderFillRect passthrough*/
+        /** @brief SDL_RenderFillRect passthrough*/
         void fillRect( const SDL_Rect& r );
 
-        /** \brief SDL_SetRenderDrawColor passthrough*/
+        /** @brief SDL_SetRenderDrawColor passthrough*/
         void setDrawColor( Uint8 r, Uint8 g, Uint8 b, Uint8 a );
 
-        /** \brief SDL_SetRenderDrawColor passthrough*/
+        /** @brief SDL_SetRenderDrawColor passthrough*/
         void setDrawColor( const SDL_Color& c );
 
 #pragma endregion
@@ -117,13 +136,13 @@ namespace RGSDL {
 
 #pragma region Input handling functions
 
-        /** \brief changes the state on how Touch and mouse inputs are handled
-         * \param state = true = mouse inputs are read as touch and viceversa
+        /** @brief changes the state on how Touch and mouse inputs are handled
+         * @param state = true = mouse inputs are read as touch and viceversa
          *                false = mouse inputs and touch inputs are keept separate
          */
         void mergeMouseAndTouch( bool state = true );
 
-        Vec2<int> mousePosition;
+        Vec2<int>                                   mousePosition;
         std::unordered_map<SDL_FingerID, Vec2<int>> touchPositions;
 
         bool keyPressed( SDL_Keycode code );
@@ -134,27 +153,28 @@ namespace RGSDL {
         std::set<SDL_FingerID> touchHeld;
         std::set<SDL_FingerID> touchReleased;
 
-        /** \brief tells if a mouse button has been just pressed or is held at the moment */
+        /** @brief tells if a mouse button has been just pressed or is held at the moment */
         bool mouseDown( Uint8 code );
 
-        /** \brief tells if a mouse button has been just pressed*/
+        /** @brief tells if a mouse button has been just pressed*/
         bool mousePressed( Uint8 code );
 
-        /** \brief tells if a mouse button is held down at the moment */
+        /** @brief tells if a mouse button is held down at the moment */
         bool mouseHeld( Uint8 code );
 
-        /** \brief tells if a mouse button was released this cycle */
+        /** @brief tells if a mouse button was released this cycle */
         bool mouseReleased( Uint8 code );
 
 #pragma endregion
 
+#pragma region ignore
         ~Engine();
 
         //=============================================================================
         // Privates
         //=========================================================================={{{
       private:
-        /** \brief ticks the current active Engine by exactly once cycle */
+        /** @brief ticks the current active Engine by exactly once cycle */
         bool tick();
         void updateWindowScale();
 
@@ -192,7 +212,8 @@ namespace RGSDL {
         friend class Texture;
         friend void UI::onDraw( Engine* );
 
-        //            void _applyScreenChange();
+//            void _applyScreenChange();
+#pragma endregion
     };
 
 } // namespace RGSDL

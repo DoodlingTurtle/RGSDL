@@ -30,11 +30,11 @@
 namespace RGSDL::Utils {
 
 #pragma region Common system functions
-    /** \brief executes `command` and writes all lines to output
+    /** @brief executes `command` and writes all lines to output
      * 
-     * \param command - a shell command
-     * \param output  - will contain all lines (max length 256 byte per line) that were printed to std::out 
-     * \param trimLines - if true, all linebreaks and whitespaces at the beginning and end of each line are removed
+     * @param command - a shell command
+     * @param output  - will contain all lines (max length 256 byte per line) that were printed to std::out 
+     * @param trimLines - if true, all linebreaks and whitespaces at the beginning and end of each line are removed
      */ 
     void exec(const std::string& command, std::vector<std::string>* output, bool trimLines = false);
     bool filePutContents(const std::string& filename, const std::string& fileContent);

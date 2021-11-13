@@ -30,7 +30,7 @@ namespace RGSDL {
     int Engine::start(
         int& argc, char**& argv, int windowWidth, int windowHeight, float targetDPI,
         const char* title, Scene* initialScene, uint32_t sdl_flags, uint32_t window_flags,
-        uint32_t windowX, uint32_t windowY )
+        uint32_t windowX, uint32_t windowY, uint32_t tww, uint32_t twh )
     {
 
         if ( initialScene == nullptr ) {
@@ -56,13 +56,21 @@ namespace RGSDL {
                      << SDL_GetTouchDeviceType( SDL_GetTouchDevice( a ) ) );
         }
 #endif
-        float ddpi;
-        SDL_GetDisplayDPI( 0, &ddpi, nullptr, nullptr );
-        float ws = ceil( ddpi / targetDPI );
+        float ws = 1.0f;
+        if ( scaleWindowToMatchDPI ) {
+            float ddpi;
+            SDL_GetDisplayDPI( 0, &ddpi, nullptr, nullptr );
+            ws = ceil( ddpi / targetDPI );
+        }
+
+        if(tww == 0 || twh == 0) {
+            tww = windowWidth;
+            twh = windowHeight;
+        }
 
         currentScene = initialScene;
         window       = SDL_CreateWindow(
-            title, windowX, windowY, windowWidth * ws, windowHeight * ws,
+            title, windowX, windowY, tww * ws, twh * ws,
             window_flags | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN );
 
         if ( window == nullptr ) {
