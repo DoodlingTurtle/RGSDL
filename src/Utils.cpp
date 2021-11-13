@@ -206,14 +206,57 @@ namespace RGSDL::Utils {
                 fillin->push_back( std::string( buffer ) );
     }
 
-    std::string stringJoin(const std::string& glue, const std::vector<std::string>& list) {
-        if(list.size() == 0) return "";
+    std::string stringJoin( const std::string& glue, const std::vector<std::string>& list )
+    {
+        if ( list.size() == 0 ) return "";
 
-        std::string ret = list[0];
-        for(int a = 1; a < list.size(); a++)
-            ret += glue + list[a];
+        std::string ret = list[ 0 ];
+        for ( long unsigned int a = 1; a < list.size(); a++ )
+            ret += glue + list[ a ];
 
         return ret;
+    }
+
+    std::string stringReplace(
+        const std::string& src, const std::string& needle, const std::string& replacement )
+    {
+        std::vector<std::string> splits;
+        stringSplit(src, needle, splits, false);
+
+        return stringJoin(replacement, splits);
+    }
+
+    bool filePutContents( const std::string& filename, const std::string& fileContent )
+    {
+        std::ofstream file;
+        file.open( filename.c_str(), std::ofstream::out );
+
+        if ( !file.good() ) {
+            Error( "Could not open file '" << filename << "'" );
+            return false;
+        }
+
+        file.write( fileContent.c_str(), fileContent.size() );
+        file.close();
+        return true;
+    }
+
+    bool writeIni( const std::string& filename, const IniType& ini )
+    {
+
+        std::string str;
+
+        for ( auto grp : ini ) {
+            str += "[" + grp.first + "]\n";
+
+            for ( auto attr : grp.second ) {
+                str += attr.first + " = " + attr.second + "\n";
+            }
+
+            str += "\n";
+        }
+
+        return filePutContents( filename, str );
     }
 
 } // namespace RGSDL::Utils
