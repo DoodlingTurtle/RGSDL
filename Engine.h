@@ -70,13 +70,23 @@ namespace RGSDL {
 
 #pragma endregion
 
-#pragma region Window Controlls
+#pragma region Window Controls
+        /** @brief The pixel position of the viewport area on the Screen (window borders are not included) */
         Vec2<int> windowPosition;       
+
+        /** @brief The pixel sizeof the viewport area on the Screen (window borders are not included) */
         Vec2<int> windowSize;
+
+        /** @brief The pixel position of the viewport area on the Screen (window borders included) */
+        Vec2<int> trueWindowPosition;
+
+        /** @brief The pixel sizeof the viewport area on the Screen (window borders included) */
+        Vec2<int> trueWindowSize;
 
         void toggleFullscreen();
 
         void msgError( char const* title, char const* msg );
+
 #pragma endregion
 
 #pragma region Draw functions

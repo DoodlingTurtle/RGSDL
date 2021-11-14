@@ -73,6 +73,8 @@ namespace RGSDL {
             title, windowX, windowY, tww * ws, twh * ws,
             window_flags | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN );
 
+        SDL_SetWindowPosition(window, windowX, windowY);
+
         if ( window == nullptr ) {
             Error( "SDL-WindowError: " << SDL_GetError() );
             return -1;
@@ -247,6 +249,12 @@ namespace RGSDL {
 
                         case SDL_WINDOWEVENT_MOVED: {
                             SDL_GetWindowPosition( window, &windowPosition.x, &windowPosition.y );
+                            int top, bottom, left, right;
+                            SDL_GetWindowBordersSize(window, &top, &left, &bottom, &right);
+                            trueWindowPosition.x = windowPosition.x - left;
+                            trueWindowPosition.y = windowPosition.y - top;
+                            trueWindowSize.x = windowSize.x + left + right;
+                            trueWindowSize.y = windowSize.y + top + bottom;
                         } break;
 
                         case SDL_WINDOWEVENT_RESIZED: {
