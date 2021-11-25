@@ -54,6 +54,8 @@ namespace RGSDL::Utils {
 
     std::string stringReplace(const std::string& src, const std::string& needle, const std::string& replacement);
 
+    uint32_t convertHex2Int(std::string hexString);
+
 #pragma endregion
 
 #pragma region Ini function
